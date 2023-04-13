@@ -1,6 +1,6 @@
 # A copy of this file is distributed with the binaries of Sniper and Benchmarks
 
-import sys, os, re, subprocess, cStringIO, sniper_stats, sniper_config
+import sys, os, re, subprocess, io, sniper_stats, sniper_config
 try:
   import json
 except ImportError:
@@ -11,7 +11,7 @@ try:
   try:
     import env_setup
     sys.path.append(os.path.join(env_setup.benchmarks_root(), 'tools', 'scheduler'))
-  except EnvironmentError, e:
+  except (EnvironmentError, e):
     pass
   import intelqueue, iqclient, packdir, app_constraints
   ic = iqclient.IntelClient()
@@ -314,7 +314,7 @@ class OutputToLess:
       sys.stdout = sys.__stdout__
       if exc_type:
         # Dump output up to error
-        print self.stream.getvalue(),
+        print (self.stream.getvalue())
         # Process exception normally
         return False
       data = self.stream.getvalue()

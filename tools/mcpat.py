@@ -36,7 +36,8 @@ def power2up(num):
   if hob != orig_num:
     hob = hob << 1
     if orig_num not in power2up_warnings:
-      print '[mcpat.py] Warning: McPAT requires inputs that are powers of two for some parameters. Increasing %d to %d.' % (orig_num, hob)
+      print ('[mcpat.py] Warning: McPAT requires inputs that are powers of two for some parameters. Increasing %d to %d.' % (orig_num, hob))
+      #print(f'[mcpat.py] Warning: McPAT requires inputs that are powers of two for some parameters. Increasing {orig_num} to {hob}')
       power2up_warnings[orig_num] = True
   return hob
 
@@ -218,13 +219,14 @@ def main(jobid, resultsdir, outputfile, powertype = 'dynamic', config = None, no
   plot_data = {}
   if powertype == 'area':
     if print_stack:
-      print '                         Area    Area %'
+      print ('                         Area    Area %')
     for core, (res, total, other, scale) in results.items():
       plot_data[core] = {}
       total_core = 0.; total_cache = 0.
       for name, value in res:
         if print_stack:
-          print '  %-12s    %6.2f mm^2   %6.2f%%' % (name, float(value), 100 * float(value) / total)
+          #print '  %-12s    %6.2f mm^2   %6.2f%%' % (name, float(value), 100 * float(value) / total)
+          print ('  %-12s    %6.2f mm^2   %6.2f%%' % (name, float(value), 100 * float(value) / total))
         if name.startswith('core'):
           total_core += float(value)
         elif name in ('icache', 'dcache', 'l2', 'l3', 'nuca'):
@@ -233,19 +235,19 @@ def main(jobid, resultsdir, outputfile, powertype = 'dynamic', config = None, no
         plot_data[core][name] = float(value)
       if print_stack:
         print
-        print '  %-12s    %6.2f mm^2   %6.2f%%' % ('core', float(total_core), 100 * float(total_core) / total)
-        print '  %-12s    %6.2f mm^2   %6.2f%%' % ('cache', float(total_cache), 100 * float(total_cache) / total)
-        print '  %-12s    %6.2f mm^2   %6.2f%%' % ('total', float(total), 100 * float(total) / total)
+        print ('  %-12s    %6.2f mm^2   %6.2f%%' % ('core', float(total_core), 100 * float(total_core) / total))
+        print ('  %-12s    %6.2f mm^2   %6.2f%%' % ('cache', float(total_cache), 100 * float(total_cache) / total))
+        print ('  %-12s    %6.2f mm^2   %6.2f%%' % ('total', float(total), 100 * float(total) / total))
   else:
     if print_stack:
-      print '                     Power     Energy    Energy %'
+      print ('                     Power     Energy    Energy %')
     for core, (res, total, other, scale) in results.items():
       plot_data[core] = {}
       total_core = 0.; total_cache = 0.
       for name, value in res:
         if print_stack:
           energy, energy_scale = sniper_lib.scale_sci(float(value) * seconds)
-          print '  %-12s    %6.2f W   %6.2f %sJ    %6.2f%%' % (name, float(value), energy, energy_scale, 100 * float(value) / total)
+          print ('  %-12s    %6.2f W   %6.2f %sJ    %6.2f%%' % (name, float(value), energy, energy_scale, 100 * float(value) / total))
         if name.startswith('core'):
           total_core += float(value)
         elif name in ('icache', 'dcache', 'l2', 'l3', 'nuca'):
@@ -255,11 +257,11 @@ def main(jobid, resultsdir, outputfile, powertype = 'dynamic', config = None, no
       if print_stack:
         print
         energy, energy_scale = sniper_lib.scale_sci(float(total_core) * seconds)
-        print '  %-12s    %6.2f W   %6.2f %sJ    %6.2f%%' % ('core', float(total_core), energy, energy_scale, 100 * float(total_core) / total)
+        print ('  %-12s    %6.2f W   %6.2f %sJ    %6.2f%%' % ('core', float(total_core), energy, energy_scale, 100 * float(total_core) / total))
         energy, energy_scale = sniper_lib.scale_sci(float(total_cache) * seconds)
-        print '  %-12s    %6.2f W   %6.2f %sJ    %6.2f%%' % ('cache', float(total_cache), energy, energy_scale, 100 * float(total_cache) / total)
+        print ('  %-12s    %6.2f W   %6.2f %sJ    %6.2f%%' % ('cache', float(total_cache), energy, energy_scale, 100 * float(total_cache) / total))
         energy, energy_scale = sniper_lib.scale_sci(float(total) * seconds)
-        print '  %-12s    %6.2f W   %6.2f %sJ    %6.2f%%' % ('total', float(total), energy, energy_scale, 100 * float(total) / total)
+        print ('  %-12s    %6.2f W   %6.2f %sJ    %6.2f%%' % ('total', float(total), energy, energy_scale, 100 * float(total) / total))
 
   if not no_graph:
     # Use Gnuplot to make a stacked bargraphs of these cpi-stacks
@@ -396,7 +398,7 @@ def edit_XML(statsobj, stats, cfg):
   cycles_scale = stats['fs_to_cycles_cores']
   clock_core = float(sniper_config.get_config(cfg, 'perf_model/core/frequency', 0))*1000
   for core in range(ncores):
-	cycles_scale[core] = float(clock_core/1000000000)
+    cycles_scale[core] = float(clock_core/1000000000)
   instrs = stats['performance_model.instruction_count']
   times = stats['performance_model.elapsed_time']
   cycles = map(lambda c, t: c * t, cycles_scale[:ncores], times[:ncores])
@@ -1256,7 +1258,7 @@ def readTemplate(ncores, num_l2s, private_l2s, num_l3s, technology_node):
 
 if __name__ == '__main__':
   def usage():
-    print 'Usage:', sys.argv[0], '[-h (help)] [-j <jobid> | -d <resultsdir (default: .)>] [-t <type: %s>] [-c <override-config>] [-o <output-file (power{.png,.txt,.py})>]' % '|'.join(powertypes)
+    print ('Usage:', sys.argv[0], '[-h (help)] [-j <jobid> | -d <resultsdir (default: .)>] [-t <type: %s>] [-c <override-config>] [-o <output-file (power{.png,.txt,.py})>]' % '|'.join(powertypes))
     sys.exit(-1)
 
   jobid = 0
@@ -1271,8 +1273,8 @@ if __name__ == '__main__':
 
   try:
     opts, args = getopt.getopt(sys.argv[1:], "hj:t:c:d:o:", [ 'no-graph', 'no-text', 'partial=' ])
-  except getopt.GetoptError, e:
-    print e
+  except (getopt.GetoptError, e):
+    print (e)
     usage()
   for o, a in opts:
     if o == '-h':
